@@ -1,4 +1,20 @@
 services:
+  bot:
+    build: .
+    container_name: rodnulya-bot
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8080:8080"  # Expose webhook port
+    volumes:
+      - ./data:/app/data # Persistent storage for bot data
+      - ./logs:/app/logs # Persistent storage for logs
+      - ./resources:/app/resources # Persistent storage for resources
+    networks:
+      - rodnulya_network
+
   postgres:
     image: postgres:16-alpine
     container_name: rodnulya-postgres
@@ -16,26 +32,9 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - rodnulya_network
 
-  bot:
-    build: .
-    container_name: rodnulya-bot
-    restart: unless-stopped
-    depends_on:
-      postgres:
-        condition: service_healthy
-    environment:
-      - BOT_TOKEN=${BOT_TOKEN}
-      - DATABASE_TYPE=postgresql
-      - DATABASE_URL=postgresql+asyncpg://rodnulya:rodnulya_password@postgres:5432/rodnulya
-      - HTTP_HOST=0.0.0.0
-      - HTTP_PORT=8080
-      - WEBHOOK_SECRET=${WEBHOOK_SECRET:-change_me_in_production}
-    ports:
-      - "8080:8080"
-    volumes:
-      - bot_data:/data
-
-volumes:
-  postgres_data:
-  bot_data:
+networks:
+  rodnulya_network:
+    external: false

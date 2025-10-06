@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.13-slim
 
 # Set working directory
 WORKDIR /app
@@ -16,14 +16,17 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
-COPY src/ ./src/
+COPY src/* /app
 
 # Create directory for SQLite database
-RUN mkdir -p /data
+RUN mkdir -p /app/data
+
+# Create directory for the logs
+RUN mkdir -p /app/logs
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 
 # Run the application
-CMD ["python", "-m", "src.main"]
+CMD ["python", "main.py"]
