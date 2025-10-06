@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: rodnulya-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: rodnulya
+      POSTGRES_USER: rodnulya
+      POSTGRES_PASSWORD: rodnulya_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rodnulya"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  bot:
+    build: .
+    container_name: rodnulya-bot
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - DATABASE_TYPE=postgresql
+      - DATABASE_URL=postgresql+asyncpg://rodnulya:rodnulya_password@postgres:5432/rodnulya
+      - HTTP_HOST=0.0.0.0
+      - HTTP_PORT=8080
+      - WEBHOOK_SECRET=${WEBHOOK_SECRET:-change_me_in_production}
+    ports:
+      - "8080:8080"
+    volumes:
+      - bot_data:/data
+
+volumes:
+  postgres_data:
+  bot_data:
