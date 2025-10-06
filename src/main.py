@@ -10,18 +10,10 @@ from aiogram.enums import ParseMode
 from sqlalchemy import select, update
 
 from .bot import router
-from .config import settings
 from .database import DatabaseManager, Payment, Subscription, User
-from .http_server import HTTPServer
+from modules import Config
+from modules import HTTPServer
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    stream=sys.stdout
-)
-
-logger = logging.getLogger(__name__)
 
 
 async def handle_payment_webhook(data: dict) -> None:

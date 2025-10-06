@@ -6,12 +6,12 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    env_file: .env
     ports:
-      - "8080:8080"  # Expose webhook port
+      - "8080:8080"       # Expose webhook port
     volumes:
-      - ./data:/app/data # Persistent storage for bot data
-      - ./logs:/app/logs # Persistent storage for logs
-      - ./resources:/app/resources # Persistent storage for resources
+      - ./logs:/app/logs  # Persistent storage for logs
+      - ./data:/app/data  # Persistent storage for resources
     networks:
       - rodnulya_network
 
@@ -19,12 +19,9 @@ services:
     image: postgres:16-alpine
     container_name: rodnulya-postgres
     restart: unless-stopped
-    environment:
-      POSTGRES_DB: rodnulya
-      POSTGRES_USER: rodnulya
-      POSTGRES_PASSWORD: rodnulya_password
+    env_file: .env
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ./postgres:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     healthcheck:
