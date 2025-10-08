@@ -1,0 +1,3 @@
+[submodule "src/data/frontend"]
+	path = src/data/frontend
+	url = https://github.com/SantaSpeen/rodnulya-frontend.git
