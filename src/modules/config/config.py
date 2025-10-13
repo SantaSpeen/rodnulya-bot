@@ -3,6 +3,7 @@ from typing import Literal
 
 from loguru import logger
 from pydantic import BaseModel, HttpUrl, PositiveInt
+from pydantic_settings import BaseSettings
 
 log = logger.bind(module="config", prefix="misc")
 
@@ -24,6 +25,27 @@ class _I18nConfig(BaseModel):
 class _WebhooksConfig(BaseModel):
     port: int
     secret: str
+
+# == == == config.payments == == == #
+
+class _YooKassaConfig(BaseModel):
+    enabled: bool
+    shop_id: str
+    secret_key: str
+    return_url: HttpUrl
+    default_email: str
+
+    vat_code: int
+    mode: str
+    subject: str
+
+    min_amount: int
+    max_amount: int
+
+    webhook_path: str
+
+class _PaymentsConfig(BaseModel):
+    yookassa: _YooKassaConfig
 
 # == == == config.webapi == == == #
 
@@ -56,6 +78,7 @@ class Config(BaseModel):
     bot: _BotConfig
     i18n: _I18nConfig
     webhooks: _WebhooksConfig
+    payments: _PaymentsConfig
     webapi: _WebApiConfig
 
     @classmethod
@@ -73,7 +96,7 @@ class Config(BaseModel):
         log.success("[Config] Configuration loaded successfully.")
         return config
 
-class EnvConfig(BaseModel):
+class EnvConfig(BaseSettings):
     BOT_CONFIG_PATH: Path
     BOT_DB_MODE: Literal['sqlite', 'postgres'] = 'sqlite'
     SQLITE_PATH: Path = Path('./resources/sqlite.db')
@@ -82,6 +105,11 @@ class EnvConfig(BaseModel):
     POSTGRES_DB: str = 'rodnulya'
     POSTGRES_HOST: str = 'localhost'
     POSTGRES_PORT: int = 5432
+
+    LOG_DIR: Path = Path('data/logs/')
+    LOG_LEVEL: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"
+    LOG_FILE: str = "info.log"
+    LOG_DEBUG_FILE: str = "debug.log"
 
     def sql_uri(self):
         match self.BOT_DB_MODE:

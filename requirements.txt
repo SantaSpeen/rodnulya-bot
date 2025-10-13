@@ -1,3 +1,5 @@
+pyyaml
+orjson
 json5
 loguru
 aiogram>=3.22.0

@@ -13,7 +13,7 @@ from loguru import logger
 
 @dataclass
 class LoggerConfiguration:
-    directory: Path
+    directory: Path | str
     # mode setup sys.stdout and `info.log`
     mode: str = "DEBUG"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
     log_file: str = "info.log"
@@ -27,9 +27,11 @@ class LoggerConfiguration:
     module_set: str = "^12"
     prefix_set: str = "<12"
     # format: str = "<green>{elapsed} -- {time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level:<8}</level> | {extra[module]:%s} | {extra[prefix]:%s} | {message}"
-    format: str = "<green>{elapsed} -- {time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level:<8}</level> | {message}"
+    format: str = "<green>{elapsed} -- {time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level:<8}</level> | [{module:^10}] {message}"
 
     def __post_init__(self):
+        if isinstance(self.directory, str):
+            self.directory = Path(self.directory)
         self.directory.mkdir(parents=True, exist_ok=True)
 
     @property
@@ -91,7 +93,7 @@ def hook_logging():
     logging.basicConfig(handlers=[InterceptHandler()], level=logging.DEBUG)
 
 
-def setup(config: LoggerConfiguration):
+def setup(config: LoggerConfiguration, hook_logger: bool = False):
     logger.remove()
     fmt = config.format # % (config.module_set, config.prefix_set)
     if sys.stdout:
@@ -103,5 +105,6 @@ def setup(config: LoggerConfiguration):
         logger.add(config.file_low_debug_path, level=0, rotation="10 MB")
     sys.excepthook = handle_exception
     threading.excepthook = handle_thread_exception
-    hook_logging()
+    if hook_logger:
+        hook_logging()
     logger.bind(module="LoggerSetup", prefix="init").success("Logger initialized.")

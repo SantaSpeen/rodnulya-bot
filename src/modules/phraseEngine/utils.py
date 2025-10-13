@@ -1,16 +1,8 @@
-import sys
-from pathlib import Path
-
-def base_path():
-    # PyInstaller creates a temp folder and stores path in _MEIPASS
-    try:
-        # noinspection PyUnresolvedReferences,PyProtectedMember
-        return Path(sys._MEIPASS).resolve()
-    except AttributeError:
-        return Path().resolve()
-
-def get_file(filename):
-    return base_path() / "resources" / filename
+# File: src/modules/phraseEngine/utils.py
+# Module: phraseEngine
+# Written by: SantaSpeen
+# Licence: MIT
+# (c) SantaSpeen 2025
 
 def flatten_dict(d, parent_key='', sep='.'):
     items = []

@@ -1,0 +1,56 @@
+{
+  bot: {
+    token: "YOUR_BOT_TOKEN",    // Токен вашего бота
+    admins: [
+      123, 456                  // ID администраторов
+    ],
+    database: "env"             // Режим работы: env - использовать переменные окружения
+  },
+
+  i18n: {
+    enabled: true,                  // Включить или отключить мультиязычность. Если отключено, то будет i18n.default
+    directory: "data/locales",      // Путь к папке с переводами
+    default: "ru",                  // Язык по умолчанию
+  },
+
+  webhooks: {
+    port: 8080,                 // Порт для вебхуков
+    secret: "YOUR_SECRET"       // Секретный ключ для вебхуков
+  },
+
+  payments: {
+    yookassa: {           // Оплата через YooKassa (https://yookassa.ru)
+      enabled: false,     // Включить оплату через YooKassa
+      shop_id: "",        // Идентификатор магазина
+      secret_key: "",     // Секретный ключ из личного кабинета
+      return_url: "https://example.com",        // URL для возврата пользователя после оплаты. Например, ссылка на ваш сайт или на https://t.me/
+      default_email: "receipts@yourdomain.com", // E-mail по умолчанию для оплаты (если не указан пользователем)
+
+      vat_code: 1,          // Код ставки НДС. Подробнее в документации YooKassa
+      mode: "full_payment", // Способы расчета. Подробнее в документации YooKassa
+      subject: "service",   // Предмет расчета. Подробнее в документации YooKassa
+
+      min_amount: 30,     // Мин. сумма пополнения в рублях
+      max_amount: 15000,  // Макс. сумма пополнения в рублях
+
+      webhook_path: "/api/payments/yookassa" // Путь для вебхука (должен совпадать с настройками в YooKassa)
+    }
+  },
+
+  webapi: {                     // Порт для Web API такой же, как и для вебхуков
+    enabled: true,              // Включить или отключить Web API
+    jwt_secret: "YOUR_SECRET",  // Секретный ключ для JWT
+    fronted: {
+      serve: true,             // Хостить фронтенд прямо на боте
+      url: "http://panl.bot.lc" // Что открывать в mini-app в телеге
+    },
+    security: {
+      token_ttl: 900,           // Время жизни токена в секундах (по умолчанию 15 минут)
+      allowed_ips: [],          // Белый список IP-адресов, которые могут использовать Web API. Оставьте пустым, чтобы разрешить всем
+      cors: {                   // Настройки CORS
+        origin: "*",            // Разрешить все домены
+        methods: ["GET", "POST", "OPTIONS"] // Разрешенные методы
+      }
+    }
+  }
+}

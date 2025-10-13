@@ -1,0 +1,16 @@
+{
+  "ru": {
+    "name": "Russian",
+    "native_name": "Русский",
+    "code": "ru",
+    "flag": "🇷🇺",
+    "encoding": "UTF-8"
+  },
+  "en": {
+    "name": "English",
+    "native_name": "English",
+    "code": "en",
+    "flag": "🇬🇧",
+    "encoding": "UTF-8"
+  }
+}
